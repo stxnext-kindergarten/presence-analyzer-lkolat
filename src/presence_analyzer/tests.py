@@ -53,6 +53,20 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertDictEqual(data[0], {u'user_id': 10, u'name': u'User 10'})
 
+    def test_mean_time_weekday(self):
+        """
+        Test mean presence time of given user grouped by weekday.
+        """
+        resp = self.client.get('/api/v1/mean_time_weekday/10')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_presence_weekday(self):
+        """
+        Test total presence time of given user grouped by weekday.
+        """
+        resp = self.client.get('/api/v1/presence_weekday/10')
+        self.assertEqual(resp.status_code, 200)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -85,6 +99,39 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             data[10][sample_date]['start'],
             datetime.time(9, 39, 5)
         )
+
+    def test_group_by_weekday(self):
+        """
+        Test group presence entries by weekday
+        """
+        data = utils.get_data()
+        result = utils.group_by_weekday(data[10])
+        self.assertEqual(result[2][0], 24465)
+        self.assertIsInstance(result, list)
+
+    def test_seconds_since_midnight(self):
+        """
+        Test of calculating amount of seconds since midnight
+        """
+        data = utils.seconds_since_midnight(datetime.time(2, 20, 35))
+        self.assertEqual(data, 8435)
+
+    def test_interval(self):
+        """
+        Test of calculating interval
+        """
+        data = utils.interval(datetime.time(2, 20, 35),
+                              datetime.time(3, 25, 35))
+        self.assertEqual(data, 3900)
+
+    def test_mean(self):
+        """
+        Test of calculating arithmetic mean
+        """
+        data = utils.mean([1.3, 2.7, 5])
+        self.assertEqual(data, 3)
+        empty_data = utils.mean([])
+        self.assertEqual(empty_data, 0)
 
 
 def suite():
