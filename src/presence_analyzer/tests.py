@@ -98,6 +98,25 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
             ],
         )
 
+    def test_presence_start_end(self):
+        """
+        Test mean time of starts and ends of given user grouped by weekday.
+        """
+        self.assertEqual(
+            self.check_status_and_content_type(
+                '/api/v1/presence_start_end/11'
+            ),
+            [
+                ['Mon', 978336734000, 978360857000],
+                ['Tue', 978337190000, 978353754000],
+                ['Wed', 978336806000, 978362127000],
+                ['Thu', 978339202000, 978362186000],
+                ['Fri', 978351416000, 978357842000],
+                ['Sat', 0, 0],
+                ['Sun', 0, 0],
+            ]
+        )
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -186,6 +205,16 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             1.1999857,
         )
         self.assertEqual(utils.mean([]), 0)
+
+    def test_start_end(self):
+        """
+        Test start end
+        """
+        data = utils.get_data()
+        result = utils.start_end(data[11])
+        self.assertEqual(result[3][1], 978339202000)
+        self.assertEqual(result[3][2], 978362186000)
+        self.assertIsInstance(result, list)
 
 
 def suite():
