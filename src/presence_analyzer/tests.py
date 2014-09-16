@@ -102,19 +102,19 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         """
         Test mean time of starts and ends of given user grouped by weekday.
         """
-        self.assertEqual(
+        self.assertDictEqual(
             self.check_status_and_content_type(
                 '/api/v1/presence_start_end/11'
             ),
-            [
-                ['Mon', 978336734000, 978360857000],
-                ['Tue', 978337190000, 978353754000],
-                ['Wed', 978336806000, 978362127000],
-                ['Thu', 978339202000, 978362186000],
-                ['Fri', 978351416000, 978357842000],
-                ['Sat', 0, 0],
-                ['Sun', 0, 0],
-            ]
+            {
+                u'Mon': [33134, 57257],
+                u'Tue': [33590, 50154],
+                u'Wed': [33206, 58527],
+                u'Thu': [35602, 58586],
+                u'Fri': [47816, 54242],
+                u'Sat': [0, 0],
+                u'Sun': [0, 0],
+            }
         )
 
 
@@ -206,15 +206,25 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         )
         self.assertEqual(utils.mean([]), 0)
 
-    def test_start_end(self):
+    def test_starts_ends_mean_of_presence(self):
         """
-        Test start end
+        Test arithmetic mean of starts and ends of presence by weekday
         """
         data = utils.get_data()
-        result = utils.start_end(data[11])
-        self.assertEqual(result[3][1], 978339202000)
-        self.assertEqual(result[3][2], 978362186000)
-        self.assertIsInstance(result, list)
+        result = utils.starts_ends_mean_of_presence(data[11])
+        self.assertDictEqual(
+            result,
+            {
+                0: [33134, 57257],
+                1: [33590, 50154],
+                2: [33206, 58527],
+                3: [35602, 58586],
+                4: [47816, 54242],
+                5: [0, 0],
+                6: [0, 0],
+            }
+        )
+        self.assertIsInstance(result, dict)
 
 
 def suite():

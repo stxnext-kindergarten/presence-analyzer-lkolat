@@ -6,8 +6,7 @@ Helper functions used in views.
 import csv
 from json import dumps
 from functools import wraps
-import time
-from datetime import datetime, date
+from datetime import datetime
 
 from flask import Response
 
@@ -105,17 +104,10 @@ def mean(items):
     return float(sum(items)) / len(items) if len(items) > 0 else 0
 
 
-def start_end(items):
+def starts_ends_mean_of_presence(items):
     """
-    Calculates arithmetic mean of starts and ends of presence.
+    Calculates arithmetic mean of starts and ends of presence by weekday.
     """
-    def create_timestamp(key):
-        return int(time.mktime(datetime.combine(
-            date(1, 1, 1),
-            items[entry][key]).timetuple()
-        ))
-
-    result = []
     weekday_list_start = {
         0: [],
         1: [],
@@ -134,21 +126,31 @@ def start_end(items):
         5: [],
         6: [],
     }
-    weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    result = {
+        0: [],
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+        5: [],
+        6: [],
+    }
 
     for entry in items:
-        weekday_list_start[entry.weekday()].append(create_timestamp('start'))
-        weekday_list_end[entry.weekday()].append(create_timestamp('end'))
+        start = items[entry]['start']
+        end = items[entry]['end']
+        weekday_list_start[entry.weekday()].append(
+            seconds_since_midnight(start)
+        )
+        weekday_list_end[entry.weekday()].append(seconds_since_midnight(end))
 
     for day in weekday_list_start:
         weekday_list_start[day] = int(mean(weekday_list_start[day]))
         weekday_list_end[day] = int(mean(weekday_list_end[day]))
 
-    for i in range(0, 7):
-        result.append([
-            weekdays[i],
-            weekday_list_start[i]*1000,
-            weekday_list_end[i]*1000,
-        ])
-
+    for i in range(len(result)):
+        result[i] = [
+            weekday_list_start[i],
+            weekday_list_end[i],
+        ]
     return result

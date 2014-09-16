@@ -5,6 +5,7 @@ Defines views.
 
 import calendar
 from flask import redirect, abort
+import collections
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import (
@@ -12,8 +13,8 @@ from presence_analyzer.utils import (
     get_data,
     mean,
     group_by_weekday,
-    start_end,
-    )
+    starts_ends_mean_of_presence,
+)
 
 import logging
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -90,6 +91,11 @@ def presence_start_end_view(user_id):
     data = get_data()
     if user_id not in data:
         log.debug('User %s not found!', user_id)
-        abort(404)
+        abort(204)
+    result = collections.OrderedDict(
+        starts_ends_mean_of_presence(data[user_id])
+    )
 
-    return start_end(data[user_id])
+    for i in range(len(result)):
+        result[calendar.day_abbr[i]] = result.pop(i)
+    return result

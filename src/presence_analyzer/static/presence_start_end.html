@@ -74,6 +74,7 @@
     </style>
 
     <script src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/utils.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart", "timeline"], 'language': 'pl'});
@@ -97,21 +98,22 @@
                         loading.show();
                         chart_div.hide();
 
-                        $.getJSON("/api/v1/presence_start_end/"+selected_user, function(result) {
+                        $.getJSON("/api/v1/presence_start_end/"+selected_user, function(raw_result) {
+
                             //Converts timestamps to date format
-                            for(i=0; i<result.length; i++){
-                                j = 1;
-                                if(result[i][j] > 0){
-                                    for(j=1; j<3; j++){
-                                        result[i][j] = new Date(result[i][j]);
-                                    }
+
+                            result = [];
+
+                            $.each(raw_result, function(key, value){
+                                if($(this)[0] > 0 && $(this)[1] > 0){
+                                    result.push([
+                                        key,
+                                        parseInterval($(this)[0]),
+                                        parseInterval($(this)[1]),
+                                    ]);
                                 }
-                                else{
-                                    //Deletes day, if data is empty
-                                    result.splice(i, 1);
-                                    i--;
-                                }
-                            }
+                            });
+
                             var data = new google.visualization.DataTable();
                             data.addColumn('string', 'Weekday');
                             data.addColumn({ type: 'datetime', id: 'Start' });
@@ -129,8 +131,6 @@
                             var chart = new google.visualization.Timeline(chart_div[0]);
                             chart.draw(data, options);
                         });
-
-
                     }
                 });
             });
