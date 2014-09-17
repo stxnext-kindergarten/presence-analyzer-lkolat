@@ -119,4 +119,8 @@ def starts_ends_mean_of_presence(items):
             seconds_since_midnight(items[entry]['end'])
         )
 
-    return {i: [int(mean(starts[i])), int(mean(ends[i]))] for i in range(7)}
+    result = {
+        i: {'starts': int(mean(starts[i])), 'ends': int(mean(ends[i]))}
+        for i in range(7)
+    }
+    return result

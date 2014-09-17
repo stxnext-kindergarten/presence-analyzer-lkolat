@@ -107,13 +107,13 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
                 '/api/v1/presence_start_end/11'
             ),
             [
-                [u'Mon', [33134, 57257]],
-                [u'Tue', [33590, 50154]],
-                [u'Wed', [33206, 58527]],
-                [u'Thu', [35602, 58586]],
-                [u'Fri', [47816, 54242]],
-                [u'Sat', [0, 0]],
-                [u'Sun', [0, 0]],
+                [u'Mon', {'starts': 33134, 'ends': 57257}],
+                [u'Tue', {'starts': 33590, 'ends': 50154}],
+                [u'Wed', {'starts': 33206, 'ends': 58527}],
+                [u'Thu', {'starts': 35602, 'ends': 58586}],
+                [u'Fri', {'starts': 47816, 'ends': 54242}],
+                [u'Sat', {'starts': 0, 'ends': 0}],
+                [u'Sun', {'starts': 0, 'ends': 0}],
             ]
         )
 
@@ -215,13 +215,13 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertDictEqual(
             result,
             {
-                0: [33134, 57257],
-                1: [33590, 50154],
-                2: [33206, 58527],
-                3: [35602, 58586],
-                4: [47816, 54242],
-                5: [0, 0],
-                6: [0, 0],
+                0: {'starts': 33134, 'ends': 57257},
+                1: {'starts': 33590, 'ends': 50154},
+                2: {'starts': 33206, 'ends': 58527},
+                3: {'starts': 35602, 'ends': 58586},
+                4: {'starts': 47816, 'ends': 54242},
+                5: {'starts': 0, 'ends': 0},
+                6: {'starts': 0, 'ends': 0},
             }
         )
         self.assertIsInstance(result, dict)
