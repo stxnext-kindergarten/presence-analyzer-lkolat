@@ -104,12 +104,12 @@
 
                             result = [];
 
-                            $.each(raw_result, function(key, value){
-                                if($(this)[0] > 0 && $(this)[1] > 0){
+                            $.each(raw_result, function(i, value){
+                                if(value[1][0] > 0 && value[1][1] > 0){
                                     result.push([
-                                        key,
-                                        parseInterval($(this)[0]),
-                                        parseInterval($(this)[1]),
+                                        value[0],
+                                        parseInterval(value[1][0]),
+                                        parseInterval(value[1][1]),
                                     ]);
                                 }
                             });

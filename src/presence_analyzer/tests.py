@@ -102,19 +102,19 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         """
         Test mean time of starts and ends of given user grouped by weekday.
         """
-        self.assertDictEqual(
+        self.assertListEqual(
             self.check_status_and_content_type(
                 '/api/v1/presence_start_end/11'
             ),
-            {
-                u'Mon': [33134, 57257],
-                u'Tue': [33590, 50154],
-                u'Wed': [33206, 58527],
-                u'Thu': [35602, 58586],
-                u'Fri': [47816, 54242],
-                u'Sat': [0, 0],
-                u'Sun': [0, 0],
-            }
+            [
+                [u'Mon', [33134, 57257]],
+                [u'Tue', [33590, 50154]],
+                [u'Wed', [33206, 58527]],
+                [u'Thu', [35602, 58586]],
+                [u'Fri', [47816, 54242]],
+                [u'Sat', [0, 0]],
+                [u'Sun', [0, 0]],
+            ]
         )
 
 
