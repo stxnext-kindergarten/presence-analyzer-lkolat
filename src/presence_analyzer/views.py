@@ -97,6 +97,9 @@ def presence_start_end_view(user_id):
     for k in raw_result:
         result.append([
             calendar.day_abbr[k],
-            raw_result[k]
+            [
+                int(mean(raw_result[k]['starts'])),
+                int(mean(raw_result[k]['ends'])),
+            ]
         ])
     return result

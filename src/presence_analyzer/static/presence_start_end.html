@@ -105,11 +105,11 @@
                             result = [];
 
                             $.each(raw_result, function(i, value){
-                                if(value[1]['starts'] > 0 && value[1]['ends'] > 0){
+                                if(value[1][0] > 0 && value[1][1] > 0){
                                     result.push([
                                         value[0],
-                                        parseInterval(value[1]['starts']),
-                                        parseInterval(value[1]['ends']),
+                                        parseInterval(value[1][0]),
+                                        parseInterval(value[1][1]),
                                     ]);
                                 }
                             });

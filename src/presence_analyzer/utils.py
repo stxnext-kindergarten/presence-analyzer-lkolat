@@ -108,19 +108,13 @@ def starts_ends_mean_of_presence(items):
     """
     Calculates arithmetic mean of starts and ends of presence by weekday.
     """
-    starts = {i: [] for i in range(7)}
-    ends = {i: [] for i in range(7)}
+    result = {i: {'starts': [], 'ends': []} for i in range(7)}
 
     for entry in items:
-        starts[entry.weekday()].append(
+        result[entry.weekday()]['starts'].append(
             seconds_since_midnight(items[entry]['start'])
         )
-        ends[entry.weekday()].append(
+        result[entry.weekday()]['ends'].append(
             seconds_since_midnight(items[entry]['end'])
         )
-
-    result = {
-        i: {'starts': int(mean(starts[i])), 'ends': int(mean(ends[i]))}
-        for i in range(7)
-    }
     return result
