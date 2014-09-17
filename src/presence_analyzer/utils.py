@@ -102,3 +102,19 @@ def mean(items):
     Calculates arithmetic mean. Returns zero for empty lists.
     """
     return float(sum(items)) / len(items) if len(items) > 0 else 0
+
+
+def starts_ends_mean_of_presence(items):
+    """
+    Calculates arithmetic mean of starts and ends of presence by weekday.
+    """
+    result = {i: {'starts': [], 'ends': []} for i in range(7)}
+
+    for entry in items:
+        result[entry.weekday()]['starts'].append(
+            seconds_since_midnight(items[entry]['start'])
+        )
+        result[entry.weekday()]['ends'].append(
+            seconds_since_midnight(items[entry]['end'])
+        )
+    return result

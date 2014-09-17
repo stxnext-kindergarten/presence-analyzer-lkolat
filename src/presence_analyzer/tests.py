@@ -98,6 +98,25 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
             ],
         )
 
+    def test_presence_start_end(self):
+        """
+        Test mean time of starts and ends of given user grouped by weekday.
+        """
+        self.assertListEqual(
+            self.check_status_and_content_type(
+                '/api/v1/presence_start_end/11'
+            ),
+            [
+                [u'Mon', {'starts': 33134, 'ends': 57257}],
+                [u'Tue', {'starts': 33590, 'ends': 50154}],
+                [u'Wed', {'starts': 33206, 'ends': 58527}],
+                [u'Thu', {'starts': 35602, 'ends': 58586}],
+                [u'Fri', {'starts': 47816, 'ends': 54242}],
+                [u'Sat', {'starts': 0, 'ends': 0}],
+                [u'Sun', {'starts': 0, 'ends': 0}],
+            ]
+        )
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -186,6 +205,26 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             1.1999857,
         )
         self.assertEqual(utils.mean([]), 0)
+
+    def test_starts_ends_mean_of_presence(self):
+        """
+        Test arithmetic mean of starts and ends of presence by weekday
+        """
+        data = utils.get_data()
+        result = utils.starts_ends_mean_of_presence(data[11])
+        self.assertDictEqual(
+            result,
+            {
+                0: {'starts': 33134, 'ends': 57257},
+                1: {'starts': 33590, 'ends': 50154},
+                2: {'starts': 33206, 'ends': 58527},
+                3: {'starts': 35602, 'ends': 58586},
+                4: {'starts': 47816, 'ends': 54242},
+                5: {'starts': 0, 'ends': 0},
+                6: {'starts': 0, 'ends': 0},
+            }
+        )
+        self.assertIsInstance(result, dict)
 
 
 def suite():
