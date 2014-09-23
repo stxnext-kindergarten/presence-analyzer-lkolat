@@ -4,7 +4,8 @@ Defines views.
 """
 
 import calendar
-from flask import Flask, redirect, abort, render_template, url_for
+from flask import redirect, abort, render_template, url_for
+from jinja2 import TemplateNotFound
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import (
@@ -24,7 +25,11 @@ def mainpage():
     """
     Redirects to front page.
     """
-    return redirect('/templates/presence_weekday.html')
+    return redirect(url_for(
+        'render_templates',
+        file_name='presence_weekday.html'
+        )
+    )
 
 
 @app.route('/api/v1/users', methods=['GET'])
@@ -105,33 +110,12 @@ def presence_start_end_view(user_id):
     return result
 
 
-@app.route('/templates/<template_name>', methods=['GET'])
-def render_templates(template_name):
+@app.route('/<file_name>', methods=['GET'])
+def render_templates(file_name):
     """
     Renders template.
     """
-    return render_template(template_name)
-
-
-@app.route('/templates/presence_weekday.html', methods=['GET', 'POST'])
-def render_presence_weekday_view():
-    """
-    Renders presence weekday view
-    """
-    return render_template("presence_weekday.html")
-
-
-@app.route('/templates/mean_time_weekday.html', methods=['GET', 'POST'])
-def render_mean_time_weekday_view():
-    """
-    Renders mean time weekday view
-    """
-    return render_template("mean_time_weekday.html")
-
-
-@app.route('/templates/presence_start_end.html', methods=['GET', 'POST'])
-def render_presence_start_end_view():
-    """
-    Renders presence start end view
-    """
-    return render_template("presence_start_end.html")
+    try:
+        return render_template(file_name)
+    except TemplateNotFound:
+        abort(404)
