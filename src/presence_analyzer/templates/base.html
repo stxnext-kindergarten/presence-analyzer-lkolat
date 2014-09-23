@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang=en>
+<head>
+    <meta charset=utf-8>
+    <title>Presence analyzer</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content=""/>
+    <meta name="author" content="STX Next sp. z o.o."/>
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <link href="/static/css/normalize.css" media="all" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        body {
+            font-family: latoregular, Helvetica, Arial;
+            background-color: #EEE;
+        }
+        #main {
+            width: 800px;
+            margin: 2em auto;
+            padding: 0 2em;
+        }
+        #content {
+            padding: 0 2em;
+            border: 1px solid #AAA;
+            background-color: #FFF;
+
+            border: 1px solid black;
+            clear: both;
+            padding: 0 1em;
+        }
+        #chart_div {
+            width: 750px;
+            height: 750px;
+        }
+
+        #header ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #header li {
+            float: left;
+            border: 1px solid #bbb;
+            border-bottom-width: 0;
+            margin: 0;
+        }
+
+        #header a {
+            text-decoration: none;
+            display: block;
+            background: #eee;
+            padding: 0.24em 1em;
+            color: #00c;
+            width: 12em;
+            text-align: center;
+        }
+
+        #header a:hover {
+            background: #ddf;
+        }
+
+        #header .active {
+            border-color: black;
+        }
+
+        #header .active a {
+            position: relative;
+            top: 1px;
+            background: white;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+    {% block script %}
+    {% endblock %}
+</head>
+
+<body>
+    <div id="main">
+        <div id="header">
+            <h1>Presence analyzer</h1>
+            <ul>
+                <li {% if active_page == 'presence_weekday' %} class="active"    {% endif %}>
+                    <a href="{{ url_for('render_presence_weekday_view') }}">
+                        Presence by weekday
+                    </a>
+                </li>
+                <li {% if active_page == 'mean_time_weekday' %} class="active"    {% endif %}>
+                    <a href="{{ url_for('render_mean_time_weekday_view') }}">
+                        Presence mean time
+                    </a>
+                </li>
+                <li {% if active_page == 'presence_start_end' %} class="active"    {% endif %}>
+                    <a href="{{ url_for('render_presence_start_end_view') }}">
+                        Presence start-end
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+</body>

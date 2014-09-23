@@ -1,78 +1,22 @@
 <!doctype html>
-<html lang=en>
-<head>
-    <meta charset=utf-8>
-    <title>Presence analyzer</title>
-    <meta name="keywords" content="" />
-    <meta name="description" content=""/>
-    <meta name="author" content="STX Next sp. z o.o."/>
-    <meta name="viewport" content="width=device-width; initial-scale=1.0">
 
-    <link href="/static/css/normalize.css" media="all" rel="stylesheet" type="text/css" />
-    <style type="text/css">
-        body {
-            font-family: latoregular, Helvetica, Arial;
-            background-color: #EEE;
-        }
-        #main {
-            width: 800px;
-            margin: 2em auto;
-            padding: 0 2em;
-        }
-        #content {
-            padding: 0 2em;
-            border: 1px solid #AAA;
-            background-color: #FFF;
+{% extends "/base.html" %}
+{% set active_page = 'presence_start_end' %}
+{% block content %}
+    <h2>Presence start-end weekday</h2>
+    <p>
+        <select id="user_id" style="display: none">
+            <option value="">--</option>
+        </select>
+        <div id="chart_div" style="display: none">
+        </div>
+        <div id="loading">
+            <img src="/static/img/loading.gif" />
+        </div>
+    </p>
+{% endblock %}
 
-            border: 1px solid black;
-            clear: both;
-            padding: 0 1em;
-        }
-        #chart_div {
-            width: 750px;
-            height: 750px;
-        }
-
-        #header ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #header li {
-            float: left;
-            border: 1px solid #bbb;
-            border-bottom-width: 0;
-            margin: 0;
-        }
-
-        #header a {
-            text-decoration: none;
-            display: block;
-            background: #eee;
-            padding: 0.24em 1em;
-            color: #00c;
-            width: 12em;
-            text-align: center;
-        }
-
-        #header a:hover {
-            background: #ddf;
-        }
-
-        #header #selected {
-            border-color: black;
-        }
-
-        #header #selected a {
-            position: relative;
-            top: 1px;
-            background: white;
-            color: black;
-            font-weight: bold;
-        }
-    </style>
-
+{% block script %}
     <script src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/utils.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -136,33 +80,4 @@
             });
         })(jQuery);
     </script>
-</head>
-
-<body>
-    <div id="main">
-        <div id="header">
-            <h1>Presence analyzer</h1>
-
-            <ul>
-                <li><a href="/static/presence_weekday.html">Presence by weekday</a></li>
-                <li><a href="/static/mean_time_weekday.html">Presence mean time</a></li>
-                <li id="selected"><a href="/static/presence_start_end.html">Presence start-end</a></li>
-            </ul>
-        </div>
-        <div id="content">
-            <h2>Presence start-end weekday</h2>
-            <p>
-                <select id="user_id" style="display: none">
-                    <option value="">--</option>
-                </select>
-                <div id="chart_div" style="display: none">
-                </div>
-                <div id="loading">
-                    <img src="/static/img/loading.gif" />
-                </div>
-            </p>
-        </div>
-
-    </div>
-</body>
-</html>
+{% endblock %}
