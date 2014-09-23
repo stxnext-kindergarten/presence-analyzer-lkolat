@@ -26,8 +26,8 @@ def mainpage():
     Redirects to front page.
     """
     return redirect(url_for(
-        'render_templates',
-        file_name='presence_weekday.html'
+        'main_view',
+        template_name='presence_weekday'
         )
     )
 
@@ -110,12 +110,13 @@ def presence_start_end_view(user_id):
     return result
 
 
-@app.route('/<file_name>', methods=['GET'])
-def render_templates(file_name):
+@app.route('/<template_name>', methods=['GET'])
+def main_view(template_name):
     """
-    Renders template.
+    Returns main page.
     """
+    template_name = "{}.html".format(template_name)
     try:
-        return render_template(file_name)
+        return render_template(template_name)
     except TemplateNotFound:
         abort(404)

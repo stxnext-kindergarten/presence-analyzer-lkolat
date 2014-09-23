@@ -19,17 +19,17 @@
             <h1>Presence analyzer</h1>
             <ul>
                 <li {% if active_page == 'presence_weekday' %} class="active"    {% endif %}>
-                    <a href="{{ url_for('render_templates', file_name='presence_weekday.html') }}">
+                    <a href="{{ url_for('main_view', template_name='presence_weekday') }}">
                         Presence by weekday
                     </a>
                 </li>
                 <li {% if active_page == 'mean_time_weekday' %} class="active"    {% endif %}>
-                    <a href="{{ url_for('render_templates', file_name='mean_time_weekday.html') }}">
+                    <a href="{{ url_for('main_view', template_name='mean_time_weekday') }}">
                         Presence mean time
                     </a>
                 </li>
                 <li {% if active_page == 'presence_start_end' %} class="active"    {% endif %}>
-                    <a href="{{ url_for('render_templates', file_name='presence_start_end.html') }}">
+                    <a href="{{ url_for('main_view', template_name='presence_start_end') }}">
                         Presence start-end
                     </a>
                 </li>

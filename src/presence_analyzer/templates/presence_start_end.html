@@ -11,7 +11,7 @@
         <div id="chart_div" style="display: none">
         </div>
         <div id="loading">
-            <img src="/static/img/loading.gif" />
+            <img src="/static/img/loading.gif"/>
         </div>
     </p>
 {% endblock %}
@@ -42,18 +42,17 @@
                         loading.show();
                         chart_div.hide();
 
+                        // Converts timestamps to date format
                         $.getJSON("/api/v1/presence_start_end/"+selected_user, function(raw_result) {
-
-                            //Converts timestamps to date format
 
                             result = [];
 
-                            $.each(raw_result, function(i, value){
-                                if(value[1][0] > 0 && value[1][1] > 0){
+                            $.each(raw_result, function(i, value) {
+                                if (value[1][0] > 0 && value[1][1] > 0) {
                                     result.push([
                                         value[0],
                                         parseInterval(value[1][0]),
-                                        parseInterval(value[1][1]),
+                                        parseInterval(value[1][1])
                                     ]);
                                 }
                             });
