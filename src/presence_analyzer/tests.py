@@ -45,7 +45,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         """
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 302)
-        assert resp.headers['Location'].endswith('/presence_weekday')
+        self.assertTrue(resp.headers['Location'].endswith('/presence_weekday'))
 
     def test_api_users(self):
         """
@@ -117,14 +117,22 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
             ]
         )
 
-    def test_render_templates(self):
+    def test_main_view(self):
         """
-        Test rendering
+        Test main view
         """
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.content_type, 'text/html; charset=utf-8')
-        assert resp.headers['Location'].endswith('/presence_weekday')
+        self.assertEqual(
+            resp.headers['Location'].endswith('/presence_weekday'), True
+        )
+        resp = self.client.get('/presence_weekday')
+        self.assertTrue('Presence by weekday' in resp.data)
+        resp = self.client.get('/mean_time_weekday')
+        self.assertTrue('Presence mean time by weekday' in resp.data)
+        resp = self.client.get('/presence_start_end')
+        self.assertTrue('Presence start-end weekday' in resp.data)
 
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
