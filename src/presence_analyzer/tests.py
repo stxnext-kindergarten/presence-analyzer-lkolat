@@ -124,15 +124,15 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.content_type, 'text/html; charset=utf-8')
-        self.assertEqual(
-            resp.headers['Location'].endswith('/presence_weekday'), True
-        )
+        self.assertTrue(resp.headers['Location'].endswith('/presence_weekday'))
         resp = self.client.get('/presence_weekday')
-        self.assertTrue('Presence by weekday' in resp.data)
+        self.assertIn('Presence by weekday', resp.data)
         resp = self.client.get('/mean_time_weekday')
-        self.assertTrue('Presence mean time by weekday' in resp.data)
+        self.assertIn('Presence mean time by weekday', resp.data)
         resp = self.client.get('/presence_start_end')
-        self.assertTrue('Presence start-end weekday' in resp.data)
+        self.assertIn('Presence start-end weekday', resp.data)
+        resp = self.client.get('/undefined')
+        self.assertEqual(resp.status_code, 404)
 
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
