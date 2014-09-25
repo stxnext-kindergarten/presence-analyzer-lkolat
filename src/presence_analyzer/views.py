@@ -4,8 +4,10 @@ Defines views.
 """
 
 import calendar
-from flask import redirect, abort, render_template, url_for
-from jinja2 import TemplateNotFound
+from flask import redirect, abort, url_for
+from flask.ext.mako import render_template
+from mako.template import Template
+from mako.lookup import TemplateLookup
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import (
@@ -115,8 +117,15 @@ def main_view(template_name):
     """
     Returns main page.
     """
-    template_name = "{}.html".format(template_name)
     try:
-        return render_template(template_name)
-    except TemplateNotFound:
+        template_n = "{}.html".format(template_name)
+        my_lookup = TemplateLookup(
+            directories=[
+                '/home/lukasz/presence-analyzer-lkolat/src/presence_analyzer/templates'
+            ]
+        )
+        my_template = my_lookup.get_template(template_n)
+
+        return my_template.render()
+    except:
         abort(404)
