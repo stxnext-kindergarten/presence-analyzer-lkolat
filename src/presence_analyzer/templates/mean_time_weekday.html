@@ -26,7 +26,6 @@
 
         (function($) {
             $(document).ready(function(){
-                $('#mean_time_weekday').addClass('active')
                 var loading = $('#loading');
                 $.getJSON("/api/v1/users", function(result) {
                     var dropdown = $("#user_id");

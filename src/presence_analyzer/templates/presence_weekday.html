@@ -23,7 +23,6 @@
 
         (function($) {
             $(document).ready(function(){
-                $('#presence_weekday').addClass('active')
                 var loading = $('#loading');
                 $.getJSON("/api/v1/users", function(result) {
                     var dropdown = $("#user_id");

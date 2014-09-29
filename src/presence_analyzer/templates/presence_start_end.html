@@ -25,7 +25,6 @@
     <script type="text/javascript">
         (function($) {
             $(document).ready(function(){
-                $('#presence_start_end').addClass('active')
                 var loading = $('#loading');
                 $.getJSON("/api/v1/users", function(result) {
                     var dropdown = $("#user_id");

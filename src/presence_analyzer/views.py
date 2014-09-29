@@ -5,9 +5,8 @@ Defines views.
 
 import calendar
 from flask import redirect, abort, url_for
-from flask.ext.mako import render_template
-from mako.template import Template
-from mako.lookup import TemplateLookup
+from flask.ext.mako import render_template, MakoTemplates
+from mako.exceptions import TopLevelLookupException
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import (
@@ -20,6 +19,8 @@ from presence_analyzer.utils import (
 
 import logging
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+mako = MakoTemplates(app)
 
 
 @app.route('/')
@@ -113,19 +114,12 @@ def presence_start_end_view(user_id):
 
 
 @app.route('/<template_name>', methods=['GET'])
-def main_view(template_name):
+def main_view(template_name=None):
     """
     Returns main page.
     """
     try:
-        template_n = "{}.html".format(template_name)
-        my_lookup = TemplateLookup(
-            directories=[
-                '/home/lukasz/presence-analyzer-lkolat/src/presence_analyzer/templates'
-            ]
-        )
-        my_template = my_lookup.get_template(template_n)
-
-        return my_template.render()
-    except:
+        template = "{}.html".format(template_name)
+        return render_template(template, site=template_name)
+    except TopLevelLookupException:
         abort(404)
