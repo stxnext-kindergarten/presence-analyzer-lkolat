@@ -1,8 +1,7 @@
 <!doctype html>
 
-{% extends "/base.html" %}
-{% set active_page = 'presence_start_end' %}
-{% block content %}
+<%inherit file="base.html"/>
+<%block name="content">
     <h2>Presence start-end weekday</h2>
     <p>
         <select id="user_id" style="display: none">
@@ -14,9 +13,9 @@
             <img src="/static/img/loading.gif"/>
         </div>
     </p>
-{% endblock %}
+</%block>
 
-{% block script %}
+<%block name="script">
     <script src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/utils.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -79,4 +78,4 @@
             });
         })(jQuery);
     </script>
-{% endblock %}
+</%block>
