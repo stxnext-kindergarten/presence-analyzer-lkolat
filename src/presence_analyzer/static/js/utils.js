@@ -6,7 +6,7 @@ function parseInterval(value) {
 
 function changeImageFileName(user_id) {
     var repository = "https://intranet.stxnext.pl/api/images/users/";
-    var src = repository + user_id;
+        src = repository + user_id;
     $('#image').show();
     $('#image > img').attr('src', src);
 }
