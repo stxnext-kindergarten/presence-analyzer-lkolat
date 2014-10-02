@@ -4,3 +4,9 @@ function parseInterval(value) {
     return result;
 }
 
+function changeImageFileName(user_id) {
+    var repository = "https://intranet.stxnext.pl/api/images/users/";
+    var src = repository + user_id;
+    $('#image').show();
+    $('#image > img').attr('src', src);
+}

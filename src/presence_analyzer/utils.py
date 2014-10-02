@@ -4,6 +4,11 @@ Helper functions used in views.
 """
 
 import csv
+import xml.etree.ElementTree as etree
+import urllib
+import os
+import logging
+
 from json import dumps
 from functools import wraps
 from datetime import datetime
@@ -11,8 +16,6 @@ from datetime import datetime
 from flask import Response
 
 from presence_analyzer.main import app
-
-import logging
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
@@ -69,6 +72,29 @@ def get_data():
             data.setdefault(user_id, {})[date] = {'start': start, 'end': end}
 
     return data
+
+
+def get_users_names():
+    """
+    Extracts users data from XML file
+    """
+    users_data = {}
+    tree = etree.parse(app.config['USERS'])
+    users = tree.find('users')
+    for user in users:
+        name = user.find('name').text
+        user_id = int(os.path.split(user.find('avatar').text)[1])
+        users_data.setdefault(user_id, {'name': name.encode("utf-8")})
+
+    return users_data
+
+
+def update_user_names():
+    """
+    Updates file with user names
+    """
+    with open(app.config['USERS'], "w") as xml_file:
+        xml_file.write(urllib.urlopen(app.config['USERS_SOURCE']).read())
 
 
 def group_by_weekday(items):

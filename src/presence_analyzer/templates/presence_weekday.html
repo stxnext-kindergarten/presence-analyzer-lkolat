@@ -7,16 +7,25 @@
         <select id="user_id" style="display: none">
             <option value="">--</option>
         </select>
+        <div id="image">
+            <img src =""/>
+        </div>
         <div id="chart_div" style="display: none">
         </div>
         <div id="loading">
             <img src="/static/img/loading.gif" />
+        </div>
+        <div id="blank" style="display: none">
+            <h3>Data not available for:
+                <div id="blank_name"></div>
+            </h3>
         </div>
     </p>
 </%block>
 
 <%block name="script">
     <script src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/utils.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
@@ -24,6 +33,7 @@
         (function($) {
             $(document).ready(function(){
                 var loading = $('#loading');
+                var blank = $('#blank');
                 $.getJSON("/api/v1/users", function(result) {
                     var dropdown = $("#user_id");
                     $.each(result, function(item) {
@@ -31,6 +41,7 @@
                     });
                     dropdown.show();
                     loading.hide();
+                    blank.hide();
                 });
                 $('#user_id').change(function(){
                     var selected_user = $("#user_id").val();
@@ -38,14 +49,29 @@
                     if(selected_user) {
                         loading.show();
                         chart_div.hide();
+                        blank.hide();
+                        changeImageFileName(selected_user);
+
                         $.getJSON("/api/v1/presence_weekday/"+selected_user, function(result) {
                             var data = google.visualization.arrayToDataTable(result);
                             var options = {};
                             chart_div.show();
                             loading.hide();
+                            blank.hide();
                             var chart = new google.visualization.PieChart(chart_div[0]);
                             chart.draw(data, options);
+                        })
+                        .fail(function() {
+                            loading.hide();
+                            blank.show();
+                            $('#blank_name').html($("#user_id option:selected").text());
                         });
+                    }
+                    // Cleanse page when none user is chosen
+                    else{
+                        chart_div.hide();
+                        blank.hide();
+                        $('#image').hide();
                     }
                 });
             });
