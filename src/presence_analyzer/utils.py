@@ -79,7 +79,7 @@ def get_users_names():
     Extracts users data from XML file
     """
     users_data = {}
-    tree = etree.parse(app.config['USERS'])
+    tree = etree.parse(app.config['USERS_DB_FILE'])
     users = tree.find('users')
     for user in users:
         name = user.find('name').text
@@ -93,7 +93,7 @@ def update_user_names():
     """
     Updates file with user names
     """
-    with open(app.config['USERS'], "w") as xml_file:
+    with open(app.config['USERS_DB_FILE'], "w") as xml_file:
         xml_file.write(urllib.urlopen(app.config['USERS_SOURCE']).read())
 
 

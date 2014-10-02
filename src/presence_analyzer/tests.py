@@ -38,7 +38,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
-        main.app.config.update({'USERS': TEST_USERS_XML})
+        main.app.config.update({'USERS_DB_FILE': TEST_USERS_XML})
         self.client = main.app.test_client()
 
     def tearDown(self):
@@ -153,7 +153,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
-        main.app.config.update({'USERS': TEST_USERS_XML})
+        main.app.config.update({'USERS_DB_FILE': TEST_USERS_XML})
 
     def tearDown(self):
         """
@@ -192,13 +192,13 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         )
 
     def test_update_user_names(self):
-        main.app.config.update({'USERS': TEST_UPDATE_XML})
+        main.app.config.update({'USERS_DB_FILE': TEST_UPDATE_XML})
         modified_file = "../../runtime/data/modified.xml"
         utils.update_user_names()
         shutil.copyfile(TEST_UPDATE_XML, modified_file)
         with open(modified_file, "a") as modified:
             modified.write("added text")
-        main.app.config.update({'USERS': modified_file})
+        main.app.config.update({'USERS_DB_FILE': modified_file})
         utils.update_user_names()
         new_file = open(modified_file, 'r')
         old_file = open(TEST_UPDATE_XML, 'r')
