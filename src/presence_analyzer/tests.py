@@ -20,6 +20,7 @@ TEST_USERS_XML = os.path.join(
 TEST_UPDATE_XML = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_update.xml'
 )
+TEST_USERS_SOURCE = "http://sargo.bolt.stxnext.pl/users.xml"
 
 
 # pylint: disable=maybe-no-member, too-many-public-methods
@@ -154,6 +155,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
         main.app.config.update({'USERS_DB_FILE': TEST_USERS_XML})
+        main.app.config.update({'USERS_SOURCE': TEST_USERS_SOURCE})
 
     def tearDown(self):
         """
@@ -190,19 +192,6 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             data[10]['name'],
             'Maciej Z.'
         )
-
-    def test_update_user_names(self):
-        main.app.config.update({'USERS_DB_FILE': TEST_UPDATE_XML})
-        modified_file = "../../runtime/data/modified.xml"
-        utils.update_user_names()
-        shutil.copyfile(TEST_UPDATE_XML, modified_file)
-        with open(modified_file, "a") as modified:
-            modified.write("added text")
-        main.app.config.update({'USERS_DB_FILE': modified_file})
-        utils.update_user_names()
-        new_file = open(modified_file, 'r')
-        old_file = open(TEST_UPDATE_XML, 'r')
-        self.assertEqual(new_file.read(), old_file.read())
 
     def test_group_by_weekday(self):
         """
