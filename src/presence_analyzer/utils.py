@@ -93,7 +93,7 @@ def update_user_names():
     """
     Updates file with user names
     """
-    with open(app.config['USERS_DB_FILE'], "w") as xml_file:
+    with open(app.config['USERS_DB_FILE'], "w+") as xml_file:
         xml_file.write(urllib.urlopen(app.config['USERS_SOURCE']).read())
 
 

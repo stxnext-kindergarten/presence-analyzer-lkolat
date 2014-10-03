@@ -34,7 +34,7 @@
 
         (function($) {
             $(document).ready(function(){
-                var loading = $('#loading');
+                var loading = $('#loading'),
                     blank = $('#blank');
                 $.getJSON("/api/v1/users", function(result) {
                     var dropdown = $("#user_id");
