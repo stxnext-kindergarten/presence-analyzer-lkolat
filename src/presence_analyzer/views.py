@@ -4,6 +4,7 @@ Defines views.
 """
 
 import calendar
+import logging
 from flask import redirect, abort, url_for
 from flask.ext.mako import render_template, MakoTemplates
 from mako.exceptions import TopLevelLookupException
@@ -12,12 +13,12 @@ from presence_analyzer.main import app
 from presence_analyzer.utils import (
     jsonify,
     get_data,
+    get_users_names,
     mean,
     group_by_weekday,
     starts_ends_mean_of_presence,
 )
 
-import logging
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 mako = MakoTemplates(app)
@@ -41,10 +42,10 @@ def users_view():
     """
     Users listing for dropdown.
     """
-    data = get_data()
+    names = get_users_names()
     return [
-        {'user_id': i, 'name': 'User {0}'.format(str(i))}
-        for i in data.keys()
+        {'user_id': i, 'name': names[i]['name']}
+        for i in names.keys()
     ]
 
 
@@ -98,7 +99,7 @@ def presence_start_end_view(user_id):
     data = get_data()
     if user_id not in data:
         log.debug('User %s not found!', user_id)
-        abort(204)
+        abort(404)
 
     raw_result = starts_ends_mean_of_presence(data[user_id])
     result = []

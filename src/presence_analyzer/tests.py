@@ -7,11 +7,14 @@ import json
 import datetime
 import unittest
 
-from presence_analyzer import main, views, utils
+from presence_analyzer import main, utils
 
 
 TEST_DATA_CSV = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_data.csv'
+)
+TEST_USERS_XML = os.path.join(
+    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
 )
 
 
@@ -31,6 +34,7 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({'USERS_DB_FILE': TEST_USERS_XML})
         self.client = main.app.test_client()
 
     def tearDown(self):
@@ -55,8 +59,8 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(
             data,
             [
-                {u'name': u'User 10', u'user_id': 10},
-                {u'name': u'User 11', u'user_id': 11},
+                {u'name': u'Maciej Z.', u'user_id': 10},
+                {u'name': u'Maciej D.', u'user_id': 11},
             ],
         )
         self.assertEqual(len(data), 2)
@@ -145,6 +149,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({'USERS_DB_FILE': TEST_USERS_XML})
 
     def tearDown(self):
         """
@@ -165,6 +170,21 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertEqual(
             data[10][sample_date]['start'],
             datetime.time(9, 39, 5)
+        )
+
+    def test_get_users_names(self):
+        """
+        Test parsing of xml file
+        """
+        data = utils.get_users_names()
+        self.assertIsInstance(data, dict)
+        self.assertItemsEqual(data.keys(), [10, 11])
+        sample_data = 'name'
+        self.assertIn(sample_data, data[10])
+        self.assertItemsEqual(data[10].keys(), ['name'])
+        self.assertEqual(
+            data[10]['name'],
+            'Maciej Z.'
         )
 
     def test_group_by_weekday(self):

@@ -7,10 +7,18 @@
         <select id="user_id" style="display: none">
             <option value="">--</option>
         </select>
+        <div id="image">
+            <img src =""/>
+        </div>
         <div id="chart_div" style="display: none">
         </div>
         <div id="loading">
             <img src="/static/img/loading.gif" />
+        </div>
+        <div id="blank" style="display: none">
+            <h3>Data not available for:
+                <div id="blank_name"></div>
+            </h3>
         </div>
     </p>
 </%block>
@@ -26,7 +34,8 @@
 
         (function($) {
             $(document).ready(function(){
-                var loading = $('#loading');
+                var loading = $('#loading'),
+                    blank = $('#blank');
                 $.getJSON("/api/v1/users", function(result) {
                     var dropdown = $("#user_id");
                     $.each(result, function(item) {
@@ -41,6 +50,8 @@
                     if(selected_user) {
                         loading.show();
                         chart_div.hide();
+                        blank.hide();
+                        changeImageFileName(selected_user);
                         $.getJSON("/api/v1/mean_time_weekday/"+selected_user, function(result) {
                             $.each(result, function(index, value) {
                                 value[1] = parseInterval(value[1]);
@@ -59,9 +70,21 @@
 
                             chart_div.show();
                             loading.hide();
+                            blank.hide();
                             var chart = new google.visualization.ColumnChart(chart_div[0]);
                             chart.draw(data, options);
+                        })
+                        .fail(function() {
+                            loading.hide();
+                            blank.show();
+                            $('#blank_name').html($("#user_id option:selected").text());
                         });
+                    }
+                    // Cleanse page when none user is chosen
+                    else{
+                        chart_div.hide();
+                        blank.hide();
+                        $('#image').hide();
                     }
                 });
             });

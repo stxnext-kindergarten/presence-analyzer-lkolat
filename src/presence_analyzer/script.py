@@ -4,10 +4,11 @@
 
 import os
 import sys
-from functools import partial
-
 import paste.script.command
 import werkzeug.script
+import presence_analyzer
+from functools import partial
+
 
 etc = partial(os.path.join, 'parts', 'etc')
 
@@ -31,6 +32,20 @@ def make_app(global_conf={}, config=DEPLOY_CFG, debug=False):
     app.config.from_pyfile(abspath(config))
     app.debug = debug
     return app
+
+
+# bin/flask-ctl xml
+def make_xml(debug=False):
+    """Gets users' names as xml file from DB"""
+    from presence_analyzer import app
+    if debug is False:
+        config = DEPLOY_CFG
+    elif debug is True:
+        config = DEBUG_CFG
+    app.config.from_pyfile(abspath(config))
+    app.debug = debug
+    presence_analyzer.utils.update_user_names()
+    print 'Performed'
 
 
 # bin/paster serve parts/etc/debug.ini
@@ -81,6 +96,7 @@ def _serve(action, debug=False, dry_run=False):
 # bin/flask-ctl ...
 def run():
     action_shell = werkzeug.script.make_shell(make_shell, make_shell.__doc__)
+    action_xml = make_xml
 
     # bin/flask-ctl serve [fg|start|stop|restart|status]
     def action_serve(action=('a', 'start'), dry_run=False):
