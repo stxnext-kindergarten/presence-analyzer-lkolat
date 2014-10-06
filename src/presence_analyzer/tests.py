@@ -6,9 +6,8 @@ import os.path
 import json
 import datetime
 import unittest
-import shutil
 
-from presence_analyzer import main, views, utils
+from presence_analyzer import main, utils
 
 
 TEST_DATA_CSV = os.path.join(
@@ -17,10 +16,6 @@ TEST_DATA_CSV = os.path.join(
 TEST_USERS_XML = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
 )
-TEST_UPDATE_XML = os.path.join(
-    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_update.xml'
-)
-TEST_USERS_SOURCE = "http://sargo.bolt.stxnext.pl/users.xml"
 
 
 # pylint: disable=maybe-no-member, too-many-public-methods
@@ -155,7 +150,6 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
         main.app.config.update({'USERS_DB_FILE': TEST_USERS_XML})
-        main.app.config.update({'USERS_SOURCE': TEST_USERS_SOURCE})
 
     def tearDown(self):
         """
