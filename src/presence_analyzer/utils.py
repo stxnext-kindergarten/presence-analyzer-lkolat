@@ -8,6 +8,7 @@ import xml.etree.ElementTree as etree
 import urllib
 import os
 import logging
+import threading
 
 from json import dumps
 from functools import wraps
@@ -17,6 +18,8 @@ from flask import Response
 
 from presence_analyzer.main import app
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+LOCK = threading.Lock()
 
 
 def jsonify(function):
@@ -35,6 +38,45 @@ def jsonify(function):
     return inner
 
 
+def lock(function):
+    @wraps(function)
+    def inner():
+        LOCK.acquire()
+        result = function()
+        LOCK.release()
+        return result
+    return inner
+
+
+def cache(time):
+    def inner(method):
+        method.cache = {}
+        method.time = None
+
+        @wraps(method)
+        def wrapped():
+            if method.cache:
+                if (
+                    method.time is not None and
+                    (datetime.now() - method.time).total_seconds() < time
+                ):
+                    return method.cache
+                else:
+                    result = method()
+                    method.cache = result
+                    method.time = datetime.now()
+                    return result
+            else:
+                result = method()
+                method.cache = result
+                method.time = datetime.now()
+                return result
+        return wrapped
+    return inner
+
+
+@lock
+@cache(600)
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.

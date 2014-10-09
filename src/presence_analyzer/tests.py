@@ -143,6 +143,16 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
     Utility functions tests.
     """
+    def check_data_parsing(self, data):
+        self.assertIsInstance(data, dict)
+        self.assertItemsEqual(data.keys(), [10, 11])
+        sample_date = datetime.date(2013, 9, 10)
+        self.assertIn(sample_date, data[10])
+        self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
+        self.assertEqual(
+            data[10][sample_date]['start'],
+            datetime.time(9, 39, 5)
+        )
 
     def setUp(self):
         """
@@ -161,16 +171,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         Test parsing of CSV file.
         """
-        data = utils.get_data()
-        self.assertIsInstance(data, dict)
-        self.assertItemsEqual(data.keys(), [10, 11])
-        sample_date = datetime.date(2013, 9, 10)
-        self.assertIn(sample_date, data[10])
-        self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
-        self.assertEqual(
-            data[10][sample_date]['start'],
-            datetime.time(9, 39, 5)
-        )
+        self.check_data_parsing(utils.get_data())
 
     def test_get_users_names(self):
         """
@@ -262,6 +263,13 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             }
         )
         self.assertIsInstance(result, dict)
+
+    def test_cache(self):
+        """
+        Test caching of CSV file
+        """
+        cache_function = utils.cache(600)
+        self.check_data_parsing(cache_function(utils.get_data)())
 
 
 def suite():
