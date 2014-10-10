@@ -16,6 +16,9 @@ TEST_DATA_CSV = os.path.join(
 TEST_USERS_XML = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
 )
+TEST_CACHE_CSV = os.path.join(
+    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_cache.csv'
+)
 
 
 # pylint: disable=maybe-no-member, too-many-public-methods
@@ -143,16 +146,6 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
     Utility functions tests.
     """
-    def check_data_parsing(self, data):
-        self.assertIsInstance(data, dict)
-        self.assertItemsEqual(data.keys(), [10, 11])
-        sample_date = datetime.date(2013, 9, 10)
-        self.assertIn(sample_date, data[10])
-        self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
-        self.assertEqual(
-            data[10][sample_date]['start'],
-            datetime.time(9, 39, 5)
-        )
 
     def setUp(self):
         """
@@ -171,7 +164,16 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         Test parsing of CSV file.
         """
-        self.check_data_parsing(utils.get_data())
+        data = utils.get_data()
+        self.assertIsInstance(data, dict)
+        self.assertItemsEqual(data.keys(), [10, 11])
+        sample_date = datetime.date(2013, 9, 10)
+        self.assertIn(sample_date, data[10])
+        self.assertItemsEqual(data[10][sample_date].keys(), ['start', 'end'])
+        self.assertEqual(
+            data[10][sample_date]['start'],
+            datetime.time(9, 39, 5)
+        )
 
     def test_get_users_names(self):
         """
@@ -268,8 +270,15 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         Test caching of CSV file
         """
-        cache_function = utils.cache(600)
-        self.check_data_parsing(cache_function(utils.get_data)())
+        result = utils.get_data()
+        main.app.config.update({'DATA_CSV': TEST_CACHE_CSV})
+        result_cached = utils.get_data()
+        self.assertEqual(result_cached, result)
+        utils.CACHE['get_data'] = {}
+        new_result = utils.get_data()
+        self.assertNotEqual(new_result, result)
+        main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        utils.CACHE['get_data'] = {}
 
 
 def suite():

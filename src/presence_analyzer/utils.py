@@ -20,6 +20,8 @@ from presence_analyzer.main import app
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 LOCK = threading.Lock()
+CACHE = {}
+TIME = {}
 
 
 def jsonify(function):
@@ -41,42 +43,41 @@ def jsonify(function):
 def lock(function):
     @wraps(function)
     def inner():
-        LOCK.acquire()
-        result = function()
-        LOCK.release()
-        return result
+        with LOCK:
+            result = function()
+            return result
     return inner
 
 
-def cache(time):
-    def inner(method):
-        method.cache = {}
-        method.time = None
+def cache(time, method_name):
 
+    def inner(method):
         @wraps(method)
         def wrapped():
-            if method.cache:
+            if CACHE.get(method_name):
                 if (
-                    method.time is not None and
-                    (datetime.now() - method.time).total_seconds() < time
+                    TIME.get(method_name) is not None and
+                    (
+                        datetime.now() - TIME.get(method_name)
+                    ).total_seconds() < time
                 ):
-                    return method.cache
+                    return CACHE.get(method_name)
                 else:
                     result = method()
-                    method.cache = result
-                    method.time = datetime.now()
+                    CACHE[method_name] = result
+                    TIME[method_name] = datetime.now()
                     return result
             else:
                 result = method()
-                method.cache = result
-                method.time = datetime.now()
+                CACHE[method_name] = result
+                TIME[method_name] = datetime.now()
                 return result
         return wrapped
     return inner
 
 
 @lock
-@cache(600)
+@cache(600, 'get_data')
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.
