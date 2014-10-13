@@ -16,6 +16,9 @@ TEST_DATA_CSV = os.path.join(
 TEST_USERS_XML = os.path.join(
     os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_users.xml'
 )
+TEST_CACHE_CSV = os.path.join(
+    os.path.dirname(__file__), '..', '..', 'runtime', 'data', 'test_cache.csv'
+)
 
 
 # pylint: disable=maybe-no-member, too-many-public-methods
@@ -262,6 +265,22 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             }
         )
         self.assertIsInstance(result, dict)
+
+    def test_cache(self):
+        """
+        Test caching of CSV file
+        """
+        result = utils.get_data()
+        main.app.config.update({'DATA_CSV': TEST_CACHE_CSV})
+        result_cached = utils.get_data()
+        self.assertEqual(result_cached, result)
+        utils.TIME = {}
+        utils.CACHE = {}
+        new_result = utils.get_data()
+        self.assertNotEqual(new_result, result)
+        main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        utils.TIME = {}
+        utils.CACHE = {}
 
 
 def suite():
