@@ -9,6 +9,7 @@ import urllib
 import os
 import logging
 import threading
+import time
 
 from json import dumps
 from functools import wraps
@@ -49,29 +50,20 @@ def lock(function):
     return inner
 
 
-def cache(time, method_name):
+def cache(expiration_time, method_name):
 
     def inner(method):
         @wraps(method)
         def wrapped():
-            if CACHE.get(method_name):
-                if (
-                    TIME.get(method_name) is not None and
-                    (
-                        datetime.now() - TIME.get(method_name)
-                    ).total_seconds() < time
-                ):
-                    return CACHE.get(method_name)
-                else:
-                    result = method()
-                    CACHE[method_name] = result
-                    TIME[method_name] = datetime.now()
-                    return result
-            else:
-                result = method()
-                CACHE[method_name] = result
-                TIME[method_name] = datetime.now()
-                return result
+            time_now = time.time()
+
+            if TIME.get(method_name, time_now) > time_now:
+                return CACHE.get(method_name)
+
+            result = method()
+            CACHE[method_name] = result
+            TIME[method_name] = time_now + expiration_time
+            return result
         return wrapped
     return inner
 
