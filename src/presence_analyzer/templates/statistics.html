@@ -1,0 +1,87 @@
+<!doctype html>
+
+<%inherit file="base.html"/>
+<%block name="content">
+    <h2>Statistics</h2>
+    <p>
+        <select id="user_id" style="display: none">
+            <option value="">--</option>
+        </select>
+        <div id="image">
+            <img src =""/>
+        </div>
+        <div id="chart_div" style="display: none">
+        </div>
+        <div id="loading">
+            <img src="/static/img/loading.gif" />
+        </div>
+        <div id="blank" style="display: none">
+            <h3>Data not available for:
+                <div id="blank_name"></div>
+            </h3>
+        </div>
+    </p>
+</%block>
+
+<%block name="script">
+    <script src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/utils.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["table"], 'language': 'en'});
+
+        (function($) {
+            $(document).ready(function(){
+                var loading = $('#loading'),
+                    blank = $('#blank');
+                $.getJSON("/api/v1/users", function(result) {
+                    var dropdown = $("#user_id");
+                    $.each(result, function(item) {
+                        dropdown.append($("<option />").val(this.user_id).text(this.name));
+                    });
+                    dropdown.show();
+                    loading.hide();
+                    blank.hide();
+                });
+                $('#user_id').change(function(){
+                    var selected_user = $("#user_id").val();
+                    var chart_div = $('#chart_div');
+                    if(selected_user) {
+                        loading.show();
+                        chart_div.hide();
+                        blank.hide();
+                        changeImageFileName(selected_user);
+
+                        $.getJSON("/api/v1/mean_time_weekday/"+selected_user, function(result) {
+                            $.each(result, function(index, value) {
+                                value[1] = parseInterval(value[1])
+                                    .toTimeString()
+                                    .replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+                            });
+                            result.unshift(["Weekday", "Presence (hh:mm:ss)"]);
+
+                            var data = google.visualization.arrayToDataTable(result);
+                            var options = {};
+                            chart_div.show();
+                            loading.hide();
+                            blank.hide();
+                            var chart = new google.visualization.Table(chart_div[0]);
+                            chart.draw(data, options);
+                        })
+                        .fail(function() {
+                            loading.hide();
+                            blank.show();
+                            $('#blank_name').html($("#user_id option:selected").text());
+                        });
+                    }
+                    // Cleanse page when none user is chosen
+                    else{
+                        chart_div.hide();
+                        blank.hide();
+                        $('#image').hide();
+                    }
+                });
+            });
+        })(jQuery);
+    </script>
+</%block>
