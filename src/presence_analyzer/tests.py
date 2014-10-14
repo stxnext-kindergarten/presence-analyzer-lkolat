@@ -62,8 +62,8 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         self.assertEqual(
             data,
             [
-                {u'name': u'Maciej Z.', u'user_id': 10},
                 {u'name': u'Maciej D.', u'user_id': 11},
+                {u'name': u'Maciej Z.', u'user_id': 10},
             ],
         )
         self.assertEqual(len(data), 2)
